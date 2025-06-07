@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 # API setup
 API_KEY = 'da5a30aa255d448b8da62a7f9b13169d'
-url = 'https://api.football-data.org/v4/competitions/PL/seasons'
+url = 'https://api.football-data.org/v2/competitions/PL'
 headers = {'X-Auth-Token': API_KEY}
 
 # Fetch data
@@ -19,16 +19,15 @@ if response.status_code != 200:
 
 data = response.json()
 
-# Validate the presence of 'seasons' key
+# Try to find season info
+seasons_data = []
 if 'seasons' not in data:
-    st.error("API response does not contain 'seasons'. Please check your API key and endpoint.")
-    st.json(data)  # Show the raw response for debugging
+    st.error("API response does not contain 'seasons'. Please check your API plan.")
+    st.json(data)
     st.stop()
 
-# Process season data
-seasons_data = []
 for season in data['seasons']:
-    year = season['year']
+    year = int(season['startDate'][:4])
     if 2020 <= year <= 2025:
         start_date = datetime.strptime(season['startDate'], "%Y-%m-%d")
         end_date = datetime.strptime(season['endDate'], "%Y-%m-%d")
